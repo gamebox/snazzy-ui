@@ -3,12 +3,14 @@
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "repository": "https://github.com/gamebox/snazzy-ui",
   "files": [
     "dist",
     "src"
   ],
+  "keywords": ["ui library", "vdom", "hyperapp", "functional", "lightweight"],
   "engines": {
-    "node": ">=10"
+    "node": ">=14"
   },
   "scripts": {
     "start": "tsdx watch",
