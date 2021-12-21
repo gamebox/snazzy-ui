@@ -2,6 +2,7 @@ import {
   init as snabbDomInit,
   eventListenersModule as elm,
   propsModule as pm,
+  attributesModule as am,
   h,
   jsx,
 } from 'snabbdom';
@@ -13,7 +14,7 @@ type SnazzyConfig = {
 };
 
 // Snazzy - a lightweight vdom UI library
-const patch = snabbDomInit([pm, elm]);
+const patch = snabbDomInit([pm, elm, am]);
 const app = (s: SnazzyConfig, mount: HTMLElement) => {
   let queue: [Function, any][] = [],
     state = typeof s.init === 'function' ? s.init() : s.init,
@@ -38,7 +39,7 @@ const app = (s: SnazzyConfig, mount: HTMLElement) => {
       newState = entry[0](state, entry[1]);
       if (Array.isArray(newState)) {
         const [s, ...e] = newState;
-        (newState = s), (effects = e);
+        (newState = s), (effects = [...effects, ...e]);
       }
     }
     if (newState !== state) {
@@ -58,6 +59,11 @@ const app = (s: SnazzyConfig, mount: HTMLElement) => {
         e && e[0](dispatch, e[1]);
       }
       (subs = newSubs), (effects = []);
+    } else if (effects.length) {
+      for (const e of effects) {
+        e && e[0](dispatch, e[1]);
+      }
+      effects = [];
     }
     requestAnimationFrame(render);
   };
