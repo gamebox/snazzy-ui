@@ -60,6 +60,7 @@ const app = (s: SnazzyConfig, mount: HTMLElement) => {
       }
       (subs = newSubs), (effects = []);
     } else if (effects.length) {
+      queue = [];
       for (const e of effects) {
         e && e[0](dispatch, e[1]);
       }
