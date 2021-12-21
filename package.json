@@ -1,5 +1,5 @@
 {
-  "version": "0.1.3",
+  "version": "0.1.4",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -8,7 +8,13 @@
     "dist",
     "src"
   ],
-  "keywords": ["ui library", "vdom", "hyperapp", "functional", "lightweight"],
+  "keywords": [
+    "ui library",
+    "vdom",
+    "hyperapp",
+    "functional",
+    "lightweight"
+  ],
   "engines": {
     "node": ">=14"
   },
