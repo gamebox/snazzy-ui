@@ -15,15 +15,12 @@ type SnazzyConfig = {
 
 // Snazzy - a lightweight vdom UI library
 const patch = snabbDomInit([pm, elm, am]);
-const app = (s: SnazzyConfig, mount: HTMLElement) => {
+const app = (c: SnazzyConfig, mount: HTMLElement) => {
   let queue: [Function, any][] = [],
-    state = typeof s.init === 'function' ? s.init() : s.init,
-    subs = s.subscriptions?.(state) ?? [],
-    cleanups = new Array(subs.length),
-    effects: [Function, any][] = [];
-  if (Array.isArray(state)) {
-    (effects = state.slice(1)), (state = state[0]);
-  }
+    s = typeof c.init === 'function' ? c.init() : c.init,
+    [state, effects] = Array.isArray(s) ? s : [s, []],
+    subs = c.subscriptions?.(state) ?? [],
+    cleanups = new Array(subs.length);
   const dispatch = (type: Function, payload: any) =>
     queue.push([type, payload]);
   for (let x = 0; x < subs.length; x = x + 1) {
@@ -31,7 +28,7 @@ const app = (s: SnazzyConfig, mount: HTMLElement) => {
       typeof subs[x][0] === 'function' &&
       (cleanups[x] = subs[x][0](dispatch, subs[x][1]));
   }
-  let vnode = s.view(state, dispatch);
+  let vnode = c.view(state, dispatch);
   const render = () => {
     let newState = state,
       newSubs = [];
@@ -44,10 +41,10 @@ const app = (s: SnazzyConfig, mount: HTMLElement) => {
     }
     if (newState !== state) {
       (queue = []), (state = newState);
-      const newVnode = s.view(state, dispatch);
+      const newVnode = c.view(state, dispatch);
       patch(vnode, newVnode);
       vnode = newVnode;
-      s.subscriptions && (newSubs = s.subscriptions(state) ?? []);
+      c.subscriptions && (newSubs = c.subscriptions(state) ?? []);
       for (let x = 0; x < newSubs.length; x = x + 1) {
         if (!subs[x] && newSubs[x]) {
           cleanups[x] = newSubs[x][0](dispatch, newSubs[x][1]);
