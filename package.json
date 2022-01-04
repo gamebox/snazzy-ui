@@ -20,10 +20,10 @@
   },
   "scripts": {
     "start": "tsdx watch",
-    "build": "node ./scripts/build.mjs",
+    "build": "tsc && node ./scripts/build.mjs",
     "test": "tsdx test",
     "lint": "tsdx lint",
-    "prepare": "node ./scripts/build.mjs",
+    "prepare": "tsc && node ./scripts/build.mjs",
     "size": "size-limit",
     "analyze": "size-limit --why"
   },
