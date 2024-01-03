@@ -1,5 +1,5 @@
 {
-  "version": "0.1.5",
+  "version": "1.0.0",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -19,19 +19,8 @@
     "node": ">=14"
   },
   "scripts": {
-    "start": "tsdx watch",
     "build": "tsc && node ./scripts/build.mjs",
-    "test": "tsdx test",
-    "lint": "tsdx lint",
-    "prepare": "tsc && node ./scripts/build.mjs",
-    "size": "size-limit",
-    "analyze": "size-limit --why"
-  },
-  "peerDependencies": {},
-  "husky": {
-    "hooks": {
-      "pre-commit": "tsdx lint"
-    }
+    "prepare": "tsc && node ./scripts/build.mjs"
   },
   "prettier": {
     "printWidth": 80,
@@ -42,23 +31,8 @@
   "name": "@snazzyui/snazzyui",
   "author": "Anthony Bullard",
   "module": "dist/snazzy-ui.esm.js",
-  "size-limit": [
-    {
-      "path": "dist/snazzy-ui.cjs.production.min.js",
-      "limit": "5.19 KB"
-    },
-    {
-      "path": "dist/snazzy-ui.esm.js",
-      "limit": "3.15 KB"
-    }
-  ],
   "devDependencies": {
-    "@size-limit/preset-small-lib": "^7.0.4",
     "esbuild": "^0.14.5",
-    "husky": "^7.0.4",
-    "size-limit": "^7.0.4",
-    "tsdx": "^0.14.1",
-    "tslib": "^2.3.1",
     "typescript": "^4.5.4"
   },
   "dependencies": {

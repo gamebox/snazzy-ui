@@ -34,7 +34,7 @@ type InternalState<S extends Object> = [
 
 // Snazzy - a lightweight vdom UI library
 const patch = snabbDomInit([pm, elm, am]);
-const app = <S>(c: SnazzyConfig<S>, mount: HTMLElement): DispatchFn<S> => {
+const app = <S extends Record<string, unknown>>(c: SnazzyConfig<S>, mount: HTMLElement): DispatchFn<S> => {
   let queue: [Function, any][] = [[() => typeof c.init === 'function' ? c.init() : c.init, null]],
     [state, effects, subs, cleanups, vnode]: InternalState<S> = [{} as S, [], [], [], mount],
     scheduled: number|null, render: VoidFunction;

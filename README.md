@@ -1,103 +1,76 @@
-# TSDX User Guide
+# Snazzy UI
 
-Congrats! You just saved yourself hours of work by bootstrapping this project with TSDX. Let’s get you oriented with what’s here and how to use it.
+A modern, functional UI library that is API compatible with Hyperapp, but built
+on top of the battle-tested Snabbdom VDOM library.  Great for building fast
+little apps or used with [Snazzy Elements](https://github.com/gamebox/snazzy-elements)
+to build design systems with Custom Web Elements (web components).
 
-> This TSDX setup is meant for developing libraries (not apps!) that can be published to NPM. If you’re looking to build a Node app, you could use `ts-node-dev`, plain `ts-node`, or simple `tsc`.
+## Installation
 
-> If you’re new to TypeScript, checkout [this handy cheatsheet](https://devhints.io/typescript)
-
-## Commands
-
-TSDX scaffolds your new library inside `/src`.
-
-To run TSDX, use:
-
-```bash
-npm start # or yarn start
+### npm
+```
+npm i @snazzyui/snazzy-ui
+```
+### pnpm
+```
+pnpm add @snazzyui/snazzy-ui
 ```
 
-This builds to `/dist` and runs the project in watch mode so any edits you save inside `src` causes a rebuild to `/dist`.
-
-To do a one-off build, use `npm run build` or `yarn build`.
-
-To run tests, use `npm test` or `yarn test`.
-
-## Configuration
-
-Code quality is set up for you with `prettier`, `husky`, and `lint-staged`. Adjust the respective fields in `package.json` accordingly.
-
-### Jest
-
-Jest tests are set up to run with `npm test` or `yarn test`.
-
-### Bundle Analysis
-
-[`size-limit`](https://github.com/ai/size-limit) is set up to calculate the real cost of your library with `npm run size` and visualize the bundle with `npm run analyze`.
-
-#### Setup Files
-
-This is the folder structure we set up for you:
-
-```txt
-/src
-  index.tsx       # EDIT THIS
-/test
-  blah.test.tsx   # EDIT THIS
-.gitignore
-package.json
-README.md         # EDIT THIS
-tsconfig.json
-```
-
-### Rollup
-
-TSDX uses [Rollup](https://rollupjs.org) as a bundler and generates multiple rollup configs for various module formats and build settings. See [Optimizations](#optimizations) for details.
-
-### TypeScript
-
-`tsconfig.json` is set up to interpret `dom` and `esnext` types, as well as `react` for `jsx`. Adjust according to your needs.
-
-## Continuous Integration
-
-### GitHub Actions
-
-Two actions are added by default:
-
-- `main` which installs deps w/ cache, lints, tests, and builds on all pushes against a Node and OS matrix
-- `size` which comments cost comparison of your library on every pull request using [`size-limit`](https://github.com/ai/size-limit)
-
-## Optimizations
-
-Please see the main `tsdx` [optimizations docs](https://github.com/palmerhq/tsdx#optimizations). In particular, know that you can take advantage of development-only optimizations:
+## Getting started
 
 ```js
-// ./types/index.d.ts
-declare var __DEV__: boolean;
+// Import from the package
+import { app, h } from '@snazzyui/snazzy-ui';
 
-// inside your code...
-if (__DEV__) {
-  console.log('foo');
-}
+// An update function, will be passed to your app's dispatch function. It can
+// return just a new state, or a tuple of newState and a list of effects to run
+// asynchronously after the newState has been applied.
+const Increment = (state) => {
+    const newCount = state.count + 1;
+    const newState = { ...state, count: newCount};
+
+    if (newCount % 15 === 0) {
+        return [newState, [[notifyUser, { message: "fizzbuzz" }]]]
+    }[
+    if (newCount % 5 === 0) {
+        return [newState, [[notifyUser, { message: "buzz" }]]];
+    } 
+    if (newCount % 3 === 0) {
+        return [newState, [[notifyUser, { message: "fizz" }]]];
+    }
+    return newState;
+};
+
+// An effect function.  This can be async and do work in the background.  It
+// notifies that app of changes to state that need to be made through the
+// dispatch function that is passed in.
+const notifyUser = (dispatch, payload) => {
+    window.alert(payload.message);
+};
+
+// This sets up the app
+app({
+    // This can either be a static object(must be an object), or a function that
+    // returns one.
+    init: { count: 0 },
+    // This is the function that will be called to render your UI whenever the
+    // state is changed.
+    // The first parameter is the current state
+    // The second parameter is a function that will call update functions.  It
+    // takes the update function as the first argument, and it's argument as the
+    // second argument.
+    //
+    // Notice that we use the h function imported from the package, this comes
+    // directly from Snabbdom. See [Snabbdom docs on h](https://github.com/snabbdom/snabbdom?tab=readme-ov-file#h) to see how to use it.
+    view: (state, dispatch) => h('div', {}, [
+        h('h1', {}, state.count),
+        h('button', { on: { click: () => dispatch(Increment, {}) } }, 'Increment'),
+    ]),
+    // This is a function that will be called with state on every state change
+    // and return a list of subscriptions.  Subscriptions can set up and clean
+    // up event watchers or other events you want to listen to outside of the
+    // DOM.
+    subscriptions: () => [],
+    // The second argument of app is the element used to mount your application in.
+}, document.querySelector("#app'))
 ```
-
-You can also choose to install and use [invariant](https://github.com/palmerhq/tsdx#invariant) and [warning](https://github.com/palmerhq/tsdx#warning) functions.
-
-## Module Formats
-
-CJS, ESModules, and UMD module formats are supported.
-
-The appropriate paths are configured in `package.json` and `dist/index.js` accordingly. Please report if any issues are found.
-
-## Named Exports
-
-Per Palmer Group guidelines, [always use named exports.](https://github.com/palmerhq/typescript#exports) Code split inside your React app instead of your React library.
-
-## Including Styles
-
-There are many ways to ship styles, including with CSS-in-JS. TSDX has no opinion on this, configure how you like.
-
-For vanilla CSS, you can include it at the root directory and add it to the `files` section in your `package.json`, so that it can be imported separately by your users and run through their bundler's loader.
-
-## Publishing to NPM
-
-We recommend using [np](https://github.com/sindresorhus/np).

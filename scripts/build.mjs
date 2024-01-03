@@ -4,12 +4,13 @@ import esbuild from 'esbuild';
 const outfile = 'dist/snazzy-ui.esm.js';
 
 await esbuild.build({
-  entryPoints: ['src/index.ts'],
-  bundle: true,
-  minify: true,
-  format: 'esm',
-  sourcemap: true,
-  outfile,
+    entryPoints: ['src/index.ts'],
+    bundle: true,
+    minify: true,
+    format: 'esm',
+    sourcemap: true,
+    target: ['es2020', 'chrome120', 'firefox120', 'safari16', 'edge115'],
+    outfile,
 });
 
 // const mod = (await fs.promises.readFile(outfile)).toString();
